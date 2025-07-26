@@ -1,0 +1,20 @@
+apiVersion: apps/v1 # Версия API для Deployment
+kind: Deployment    # Тип ресурса
+metadata:
+  name: my-web-deployment # Имя Deployment
+  labels:
+    app : my-k8s-application  # Метки для deployment
+spec:
+  selector:
+    matchLabels:    # Какие Pod'ы управляются этим deployment
+      project: kgb
+  template:         # Шаблон Pod'a
+    metadata: 
+      labels:       # Метки для Pod'ов (должны совпадать с selector.matchLabels)
+        project: kgb
+    spec:
+      containers:
+        - name : kgb-web
+          image: nginx:latest   # Образ контейнера
+          ports:
+            - containerPort: 80 # Порт контейнера

@@ -1,0 +1,23 @@
+apiVersion: apps/v1 # Версия API для Deployment
+kind: Deployment    # Тип ресурса
+metadata:
+  name: my-web-deployment-replicas # Имя Deployment
+  labels:
+    app : my-k8s-application  # Метки для deployment
+    env : prod
+    owner: Valeriy
+spec:
+  replicas: 4
+  selector:
+    matchLabels:    # Какие Pod'ы управляются этим deployment
+      project: smak
+  template:         # Шаблон Pod'a
+    metadata: 
+      labels:       # Метки для Pod'ов (должны совпадать с selector.matchLabels)
+        project: smak
+    spec:
+      containers:
+        - name : smak-web
+          image: nginx:1.28.0-alpine-slim   # Образ контейнера
+          ports:
+            - containerPort: 80 # Порт контейнера

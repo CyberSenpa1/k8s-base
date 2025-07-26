@@ -1,0 +1,48 @@
+apiVersion: apps/v1 # Версия API для Deployment
+kind: Deployment    # Тип ресурса
+metadata:
+  name: my-web-deployment-autoscaling # Имя Deployment
+  labels:
+    app : my-k8s-application  # Метки для deployment
+    env : prod
+    owner: Valeriy
+spec:
+  replicas: 2
+  selector:
+    matchLabels:    # Какие Pod'ы управляются этим deployment
+      project: gra
+  template:         # Шаблон Pod'a
+    metadata: 
+      labels:       # Метки для Pod'ов (должны совпадать с selector.matchLabels)
+        project: gra
+    spec:
+      containers:
+        - name : gra-web
+          image: nginx:1.28.0-alpine-slim   # Образ контейнера
+          ports:
+            - containerPort: 80 # Порт контейнера
+---
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: my-autoscaling
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v2beta1v1
+    kind: Deployment
+    name: my-web-deployment-autoscaling
+  minReplicas: 3
+  maxReplicas: 5
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: 80
+  - type: Resource
+    resource: 
+      name: memory
+      target:
+        type: Utilization
+        averageUtilization: 80
