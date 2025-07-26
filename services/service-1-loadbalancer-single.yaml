@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: my-web-deployment
+  labels:
+    app: my-k8s-deployment
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      project: koad   # Сервис смотрит на эти лейблы пода
+  template:
+    metadata:
+      labels:
+        project: koad
+    spec:
+      containers:
+        - name: koad-web
+          image: nginx:latest
+          ports:
+          - containerPort: 80
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: my-single-pod-service
+  labels:
+    env : prod
+    owner: ValeriySimachenkov
+spec:
+  selector:
+    project: koad     # Выбираем поды с такими лейблами
+  ports:
+    - name: app-listener
+      protocol: TCP
+      port: 80        # порт на load Balancer
+      targetPort: 80  # Порт на поде
+  type: LoadBalancer
