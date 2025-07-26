@@ -1,0 +1,21 @@
+apiVersion: apps/v1 
+kind: Deployment    
+metadata:
+  name: my-web1-deployment 
+  labels:
+    app : my-k8s1-application  
+spec:
+  replicas: 3
+  selector:
+    matchLabels:    
+      project: kgb1
+  template:         
+    metadata: 
+      labels:       
+        project: kgb1
+    spec:
+      containers:
+        - name : kgb1-web
+          image: nginx:latest   
+          ports:
+            - containerPort: 80 

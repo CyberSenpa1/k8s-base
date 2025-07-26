@@ -1,0 +1,21 @@
+apiVersion: apps/v1 # Версия API для Deployment
+kind: Deployment    # Тип ресурса
+metadata:
+  name: {{ .Release.Name }}-deployment # Имя Deployment
+  labels:
+    app : {{ .Release.Name }}-deployment  # Метки для deployment
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:    # Какие Pod'ы управляются этим deployment
+      project: {{ .Release.Name }}
+  template:         # Шаблон Pod'a
+    metadata: 
+      labels:       # Метки для Pod'ов (должны совпадать с selector.matchLabels)
+        project: {{ .Release.Name }}
+    spec:
+      containers:
+        - name : {{ .Release.Name }}-web
+          image: {{ .Values.container.image }}   # Образ контейнера
+          ports:
+            - containerPort: 80 # Порт контейнера
